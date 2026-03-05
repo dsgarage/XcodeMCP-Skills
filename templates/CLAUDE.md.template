@@ -1,0 +1,43 @@
+# {プロジェクト名}
+
+## プロジェクト情報
+- スキーム: {スキーム名}
+- テストターゲット: {テストターゲット名}
+- 最小デプロイ: iOS {バージョン}
+- 言語: Swift {バージョン}
+
+## 共通ルール
+- コードのコメントは日本語可（変数名・関数名は英語）
+- SwiftUI ベースの MVVM アーキテクチャ
+- Swift Concurrency (async/await) を優先使用
+
+## Xcode Agent 環境
+# CLAUDE_CONFIG_DIR が設定されている場合、Xcode 内の Claude Agent として動作
+
+### ビルド & テスト
+- ビルド: `BuildProject` を使用
+- テスト: `RunSomeTests` で単体テストを優先実行
+- 全テスト: `RunAllTests` で実行（時間がかかる場合あり）
+- テスト結果: `test-results/` ディレクトリにログを保存
+
+### UI 検証
+- プレビュー: `RenderPreview` で SwiftUI プレビューを視覚確認
+- 修正→プレビュー→確認のループを回す
+
+### ドキュメント
+- API 調査: `DocumentationSearch` で Apple 公式ドキュメントを検索
+- frameworks パラメータで対象フレームワークを絞り込む
+
+### 診断
+- `XcodeListNavigatorIssues` がエラー/警告の正規ソース
+- `GetBuildLog` は補足的なビルドログ
+
+## Claude Code CLI 環境
+
+### ビルド & テスト
+- ビルド: `xcodebuild -scheme {スキーム名} -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'`
+- テスト: `xcodebuild test -scheme {スキーム名} -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'`
+
+### コード品質
+- SwiftLint でリント: `swiftlint lint --strict`
+- フォーマット: `swift-format format --in-place --recursive Sources/`
