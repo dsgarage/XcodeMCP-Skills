@@ -15,6 +15,8 @@ Xcode 26.3 は 20 個のビルトイン MCP ツールを搭載しています。
 | `ios-doc-fix` | Deprecated API 検出・ドキュメント検索・修正 | API マイグレーション |
 | `ios-file-ops` | プロジェクト内ファイル操作のベストプラクティス | リファクタリング・ファイル整理 |
 | `ios-diagnostics` | ビルドエラー・警告の診断と修正 | デバッグ・コード品質改善 |
+| `ios-simplify` | /simplify の Xcode MCP 拡張版。レビュー＋ビルド検証＋プレビュー回帰＋テスト確認 | PR 前の最終仕上げ |
+| `ios-batch` | /batch の Xcode MCP 拡張版。大規模変更の自動分解・並列実行・ビルド検証 | API マイグレーション・アーキテクチャ移行 |
 
 ## セットアップ
 
@@ -90,6 +92,38 @@ ln -s ~/XcodeMCP-Skills/skills/ios-build-test .claude/skills/ios-build-test
 | `DocumentationSearch` | Apple 公式ドキュメント検索 |
 | `RenderPreview` | SwiftUI プレビューのスクリーンショット取得 |
 | `XcodeListWindows` | Xcode ウィンドウ一覧（tabIdentifier 取得用） |
+
+## /simplify & /batch 連携
+
+Xcode MCP 環境向けに、Claude Code の `/simplify` と `/batch` スキルを拡張した `ios-simplify` / `ios-batch` を提供しています。
+
+### ios-simplify
+
+標準の `/simplify`（再利用性・品質・効率性の 3 エージェントレビュー）に加え、Xcode MCP ツールで以下を自動検証します:
+
+- `BuildProject` — コンパイル検証
+- `RenderPreview` — SwiftUI プレビューの回帰チェック
+- `RunSomeTests` — 関連テストのパス確認
+- `XcodeListNavigatorIssues` — 警告の増減チェック
+- `DocumentationSearch` — deprecated API の検出
+
+**推奨ワークフロー**: `実装 → commit → /ios-simplify → diff 確認 → commit → PR`
+
+### ios-batch
+
+標準の `/batch`（調査→分解→並列実行→PR 作成）を iOS プロジェクト向けに拡張:
+
+- `XcodeGrep` / `XcodeGlob` で影響範囲を正確に把握
+- 各ワーカーが `BuildProject` + `RunSomeTests` でビルド＆テスト検証
+- iOS 固有のガードレール（`.pbxproj` / `Info.plist` / `.entitlements` 等の変更禁止）
+- 各ワーカーの変更に `ios-simplify` を自動適用
+
+**活用例**:
+```bash
+/ios-batch UIKit の UIAlertController を全て SwiftUI の .alert に移行
+/ios-batch Combine の sink/store を async/await に移行
+/ios-batch iOS 17 deprecated API を iOS 18 代替 API に更新
+```
 
 ## 前提条件
 
