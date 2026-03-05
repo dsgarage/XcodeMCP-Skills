@@ -20,38 +20,44 @@ Xcode 26.3 は 20 個のビルトイン MCP ツールを搭載しています。
 
 ## セットアップ
 
-### 方法 1: Xcode 内 Claude Agent に配置
+### インストーラーで一括配置（推奨）
 
 ```bash
-# スキルディレクトリにクローン
-git clone https://github.com/dsgarage/XcodeMCP-Skills.git /tmp/XcodeMCP-Skills
-
-# Xcode の ClaudeAgentConfig にコピー
-cp -r /tmp/XcodeMCP-Skills/skills/* \
-  ~/Library/Developer/Xcode/CodingAssistant/ClaudeAgentConfig/skills/
-```
-
-### 方法 2: Claude Code CLI で使用
-
-```bash
-# プロジェクトの .claude/skills/ にコピー
-cp -r /tmp/XcodeMCP-Skills/skills/* .claude/skills/
-```
-
-### 方法 3: シンボリックリンクで共有（推奨）
-
-CLI と Xcode の両方で同じスキルを使えます：
-
-```bash
-# 任意の場所にクローン
 git clone https://github.com/dsgarage/XcodeMCP-Skills.git ~/XcodeMCP-Skills
+cd ~/XcodeMCP-Skills
 
-# Xcode Agent 用
-ln -s ~/XcodeMCP-Skills/skills/ios-build-test \
-  ~/Library/Developer/Xcode/CodingAssistant/ClaudeAgentConfig/skills/ios-build-test
+# 対話モード（配置先を選択）
+./install.sh
 
-# Claude Code CLI 用（プロジェクト単位）
-ln -s ~/XcodeMCP-Skills/skills/ios-build-test .claude/skills/ios-build-test
+# または直接指定
+./install.sh --xcode     # Xcode 内 Claude Agent に配置
+./install.sh --cli       # Claude Code CLI グローバルに配置
+./install.sh --project   # 現在のプロジェクトの .claude/skills/ に配置
+./install.sh --link      # シンボリックリンクで配置（自動更新対応）
+```
+
+`make` でも同じ操作ができます:
+
+```bash
+make install-xcode     # Xcode Agent
+make install-cli       # Claude Code CLI
+make install-project   # 現在のプロジェクト
+make install-link      # シンボリックリンク（推奨）
+make list              # スキル一覧表示
+```
+
+### 手動配置
+
+```bash
+# Xcode Agent
+cp -r skills/* ~/Library/Developer/Xcode/CodingAssistant/ClaudeAgentConfig/skills/
+
+# Claude Code CLI（プロジェクト単位）
+cp -r skills/* .claude/skills/
+
+# シンボリックリンク（Xcode + CLI 共有）
+ln -s ~/XcodeMCP-Skills/skills/* ~/Library/Developer/Xcode/CodingAssistant/ClaudeAgentConfig/skills/
+ln -s ~/XcodeMCP-Skills/skills/* ~/.claude/skills/
 ```
 
 ## Xcode 26.3 MCP ツールリファレンス
